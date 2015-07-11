@@ -23,7 +23,7 @@
 			angular
 				.module('rtep',[])
 				.service('http',function($http){
-					var baseUrl = 'http://localhost:8765';
+					var baseUrl = 'http://46.101.191.124:8765';
 
 					this.post = function(route){
 						$http.post(baseUrl + '/publish/' + route);
