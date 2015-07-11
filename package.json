@@ -1,0 +1,14 @@
+{
+  "name": "web-messaging",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "info@mikebild.com",
+  "license": "MIT",
+  "dependencies": {
+    "rx": "^2.5.3"
+  }
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.2/angular.min.js"></script>
+	</head>
+	<body ng-app="rtep">
+		<div ng-controller="SimCtrl">
+			<h2>Stream output</h2>			
+			<div ng-bind="output"></div>
+			<hr/>
+			<h2>Subscribe to stream</h2>
+			<button ng-click="subscribe('')">All</button>
+			<button ng-click="subscribe('blue')">Blue</button>
+			<button ng-click="subscribe('green')">Green</button>
+			<button ng-click="subscribe('red')">Red</button>
+			<hr/>
+			<h2>Publish to stream</h2>
+			<button ng-click="publish('blue')">Blue</button>
+			<button ng-click="publish('green')">Green</button>
+			<button ng-click="publish('red')">Red</button>
+		</div>
+		<script>
+			angular
+				.module('rtep',[])
+				.service('http',function($http){
+					var baseUrl = 'http://localhost:8765';
+
+					this.post = function(route){
+						$http.post(baseUrl + '/publish/' + route);
+					};
+
+					this.on = function(route, cb){
+						var xhr = new XMLHttpRequest();
+						xhr.open('GET', baseUrl + '/subscribe/' + route, true);
+						xhr.onreadystatechange = function(){
+							if (this.readyState===3 && this.status==200){
+								var chunks = this.responseText.split('\n\n').slice(-2)
+									.filter(function(itm){
+										return itm !== '';
+									})
+									.map(function(itm){
+										return JSON.parse(itm);
+									})
+								cb(null, chunks[chunks.length-1]);
+							}
+						};
+						xhr.send();
+						return xhr;
+					};
+
+				})
+				.controller('SimCtrl', function($scope, http){
+
+					var subscription = http.on('', function(err, data){
+						$scope.output = JSON.stringify(data);
+						$scope.$apply();
+					});
+
+					$scope.publish = function(group){
+						http.post(group);
+					};
+
+					$scope.subscribe = function(group){			
+						subscription.abort();
+						subscription = http.on(group, function(err, data){
+							$scope.output = JSON.stringify(data);
+							$scope.$apply();
+						});						
+					};
+
+				});								
+		</script>
+	</body>
+</html>
