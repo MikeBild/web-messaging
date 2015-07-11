@@ -14,11 +14,11 @@ var simSource = rx.Observable.interval(2000)
 									group: groups[getRandomInt(0,3)]
 								};
 							})
+							.merge(publish)
 							.publish()
 							.refCount();
 
-var grouped = simSource
-							.merge(publish)
+var grouped = simSource							
 							.scan({}, function (acc, x) {
 								if(!acc[x.group]) acc[x.group] = 0;
 								acc[x.group] += 1;
@@ -74,6 +74,23 @@ server.on('request', function(req, res){
 		});
 		res.end();
 	});
+
+	route.get(/\/log/, function(req, res){
+		console.log('New log stream subscription: ');
+
+		var subscription = simSource
+			.doAction(function(data){
+				res.write(JSON.stringify(data) + '\n\n');
+			})
+			.subscribe();
+
+			req.on('close', function(){
+				console.log('Stream subscription closed');
+				
+				subscription.dispose();
+			});
+	});
+
 
 });
 
