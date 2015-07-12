@@ -2,6 +2,7 @@
 
 var rx = require('rx');
 var http = require('http');
+var fs = require('fs');
 
 var SERVICE_PORT = process.env.SERVICE_PORT || 8765;
 var groups = ['green', 'blue', 'red'];
@@ -41,6 +42,12 @@ server.on('request', function(req, res){
 	res.setHeader('Access-Control-Allow-Origin', '*');
 	res.setHeader('Content-Type', 'application/json');
 	res.setHeader('Transfer-Encoding', 'chunked');
+
+	route.get(/\//, function(req, res){
+		res.setHeader('Content-Type', 'text/html');
+		fs.createReadStream('index.html')
+			.pipe(res);
+	});
 
 	route.get(/\/subscribe\/([a-z]*)/, function(req, res){
 		console.log('New source stream subscription: ' + req.params[0]);
@@ -91,7 +98,6 @@ server.on('request', function(req, res){
 			});
 	});
 
-
 });
 
 function router(req, res){
@@ -109,7 +115,9 @@ function router(req, res){
 		all: function(verb, route, cb){
 			if(req.method !== verb) return;
 			var matches = req.url.match(route);
+			
 			if(!matches) return;
+			if(matches[0] !== matches.input) return;
 
 			req.params[0] = matches[1];
 			req.params[1] = matches[2];

@@ -5,7 +5,7 @@
 	</head>
 	<body ng-app="rtep">
 		<div ng-controller="SimCtrl">
-			<h2>Stream output (<a href="http://46.101.191.124:8765/log" target="_blank">Event-Log</a>)</h2>			
+			<h2>Stream output (<a href="/log" target="_blank">Event-Log</a>)</h2>			
 			<div ng-bind="output"></div>
 			<hr/>
 			<h2>Subscribe to stream</h2>
@@ -23,7 +23,7 @@
 			angular
 				.module('rtep',[])
 				.service('http',function($http){
-					var baseUrl = 'http://46.101.191.124:8765';
+					var baseUrl = '';
 
 					this.post = function(route){
 						$http.post(baseUrl + '/publish/' + route);
