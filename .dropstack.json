@@ -1,0 +1,9 @@
+{
+  "variables": [
+    "SERVICE_PORT=80"
+  ],
+  "alias": "rx-web-messaging.services.dropstack.run",
+  "name": "qsmdklwm",
+  "serviceUrl": "qsmdklwm.services.dropstack.run",
+  "type": "npm"
+}
